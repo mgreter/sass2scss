@@ -2,6 +2,7 @@
 #include <stack>
 #include <string>
 #include <cstring>
+#include <cstdlib>
 #include <sstream>
 #include <iostream>
 
@@ -759,7 +760,7 @@ namespace Sass
 
 		// allocate new memory on the heap
 		// caller has to free it after use
-		char * cstr = new char [scss.length()+1];
+		char * cstr = (char*) malloc (scss.length() + 1);
 		// create a copy of the string
 		strcpy (cstr, scss.c_str());
 		// return pointer
