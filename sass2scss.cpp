@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
+#include <stdio.h>
 
 ///*
 //
@@ -727,6 +728,41 @@ namespace Sass
 	}
 	// EO process
 
+	// read line with either CR, LF or CR LF format
+	// http://stackoverflow.com/a/6089413/1550314
+	static std::istream& safeGetline(std::istream& is, std::string& t)
+	{
+		t.clear();
+
+		// The characters in the stream are read one-by-one using a std::streambuf.
+		// That is faster than reading them one-by-one using the std::istream.
+		// Code that uses streambuf this way must be guarded by a sentry object.
+		// The sentry object performs various tasks,
+		// such as thread synchronization and updating the stream state.
+
+		std::istream::sentry se(is, true);
+		std::streambuf* sb = is.rdbuf();
+
+		for(;;) {
+			int c = sb->sbumpc();
+			switch (c) {
+				case '\n':
+					return is;
+				case '\r':
+					if(sb->sgetc() == '\n')
+						sb->sbumpc();
+					return is;
+				case EOF:
+					// Also handle the case when the last line has no line ending
+					if(t.empty())
+						is.setstate(std::ios::eofbit);
+					return is;
+				default:
+					t += (char)c;
+			}
+		}
+	}
+
 	// the main converter function for c++
 	char* sass2scss (const string sass, const int options)
 	{
@@ -734,7 +770,6 @@ namespace Sass
 		// local variables
 		string line;
 		string scss = "";
-		const char delim = '\n';
 		stringstream stream(sass);
 
 		// create converter variable
@@ -751,7 +786,7 @@ namespace Sass
 		converter.options = options;
 
 		// read line by line and process them
-		while(std::getline(stream, line, delim))
+		while(safeGetline(stream, line))
 		{ scss += process(line, converter); }
 
 		// create mutable string
