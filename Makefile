@@ -1,5 +1,5 @@
 
-GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always)
+GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 
 ifeq ($(OS),Windows_NT)
 	MV ?= move
