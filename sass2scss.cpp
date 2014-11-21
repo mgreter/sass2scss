@@ -576,16 +576,20 @@ namespace Sass
 				// get positions for the actual import url
 				size_t pos_import = sass.find_first_of(SASS2SCSS_FIND_WHITESPACE, pos_left + 7);
 				size_t pos_quote = sass.find_first_not_of(SASS2SCSS_FIND_WHITESPACE, pos_import);
-				// check if the url is quoted
-				if (sass.substr(pos_quote, 1) != "\"" && sass.substr(pos_quote, 1) != "\'")
+				// leave proper urls untouched
+				if (sass.substr(pos_quote, 4) != "url(")
 				{
-					// get position of the last char on the line
-					size_t pos_end = sass.find_last_not_of(SASS2SCSS_FIND_WHITESPACE);
-					// assertion check for valid result
-					if (pos_end != string::npos)
+					// check if the url appears to be already quoted
+					if (sass.substr(pos_quote, 1) != "\"" && sass.substr(pos_quote, 1) != "\'")
 					{
-						// add quotes around the full line after the import statement
-						sass = sass.substr(0, pos_quote) + "\"" + sass.substr(pos_quote, pos_end - pos_quote + 1) + "\"";
+						// get position of the last char on the line
+						size_t pos_end = sass.find_last_not_of(SASS2SCSS_FIND_WHITESPACE);
+						// assertion check for valid result
+						if (pos_end != string::npos)
+						{
+							// add quotes around the full line after the import statement
+							sass = sass.substr(0, pos_quote) + "\"" + sass.substr(pos_quote, pos_end - pos_quote + 1) + "\"";
+						}
 					}
 				}
 
