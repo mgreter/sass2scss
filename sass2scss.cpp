@@ -790,7 +790,7 @@ namespace Sass
 		converter.options = options;
 
 		// read line by line and process them
-		while(safeGetline(stream, line))
+		while(safeGetline(stream, line) && !stream.eof())
 		{ scss += process(line, converter); }
 
 		// create mutable string
