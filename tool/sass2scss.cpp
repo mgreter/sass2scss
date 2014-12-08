@@ -64,7 +64,7 @@ int main (int argc, char** argv)
 		else if (arg == "-v" || arg == "--version")
 		{
 			// check current hash and if it matches any of the tags, use tag
-			cout << Sass::SASS2SCSS_VERSION << endl;
+			cout << SASS2SCSS_VERSION << endl;
 			exit(0);
 		}
 

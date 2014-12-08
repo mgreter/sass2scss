@@ -1,5 +1,5 @@
 
-GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
+SASS2SCSS_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 
 ifeq ($(OS),Windows_NT)
 	MV ?= move
@@ -17,11 +17,13 @@ endif
 
 all: sass2scss
 
+CXXFLAGS = -DSASS2SCSS_VERSION="\"$(SASS2SCSS_VERSION)\""
+
 sass2scss.o: sass2scss.cpp
-	g++ -DVERSION="\"$(GIT_VERSION)\"" -Wall -c sass2scss.cpp
+	g++ $(CXXFLAGS) -Wall -c sass2scss.cpp
 
 sass2scss: sass2scss.o
-	g++ -DVERSION="\"$(GIT_VERSION)\"" -Wall -o sass2scss -I. tool/sass2scss.cpp sass2scss.o
+	g++ $(CXXFLAGS) -Wall -o sass2scss -I. tool/sass2scss.cpp sass2scss.o
 
 clean:
 	ifeq ($(OS),Windows_NT)

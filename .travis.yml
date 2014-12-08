@@ -5,3 +5,5 @@ compiler:
   - clang
 
 script: make
+
+after_success: ./sass2scss -v
