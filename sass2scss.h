@@ -83,6 +83,9 @@ extern "C" {
 	// available to c and c++ code
 	char* sass2scss (const char* sass, const int options);
 
+	// Get compiled sass2scss version
+	const char* sass2scss_version();
+
 #ifdef __cplusplus
 }
 #endif
