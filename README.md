@@ -30,6 +30,8 @@ sass2scss [options] < file.sass
 -v, --version      version information
 ```
 
+The source Sass is read from stdin and the resulting SCSS is printed to stdout.
+
 `--pretty` can be repeated up to 3 times to add even more linefeeds (lf).
 
 - 0: Write everything on one line (`minimized`)
@@ -42,3 +44,50 @@ of the input file. This is the best option if you still want to use `source-maps
 since it should only change the source by a few inserted chars. So far
 `sass2sccs` does not produce source-maps and `libsass` will not be able to
 produce 100% accurate `source-maps` for indented sass syntax input files!
+
+Use examples
+============
+
+The original Sass file, called `styles.sass`:
+
+```sass
+#main
+  // This is the best color since it has a specific meaning
+  color: rebeccapurple
+  font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka
+  font-size: 75%
+```
+
+For example with default options, running
+
+```sh
+sass2scss < styles.sass > styles.scss
+```
+
+Would result the file `styles.scss` to look like:
+
+```scss
+#main { color: rebeccapurple;font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka;font-size: 75%; }
+```
+
+When adding options for pretty printing (`-p`) and keeping comments (`-k`):
+
+```scss
+#main {
+  // This is the best color since it has a specific meaning
+  color: rebeccapurple;
+  font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka;
+  font-size: 75%; }
+```
+
+With two pretty (`-p -p`) and comment conversion (`-c`) options, the output becomes:
+
+```scss
+#main {
+  /* This is the best color since it has a specific meaning */
+  color: rebeccapurple;
+  font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka;
+  font-size: 75%;
+}
+```
+
