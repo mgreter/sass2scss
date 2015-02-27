@@ -1,3 +1,9 @@
+/**
+ * sass2scss
+ * Licensed under the MIT License
+ * Copyright (c) Marcel Greter
+ */
+
 // include library
 #include <stack>
 #include <string>
