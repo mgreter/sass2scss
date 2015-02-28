@@ -1,3 +1,9 @@
+/**
+ * sass2scss
+ * Licensed under the MIT License
+ * Copyright (c) Marcel Greter
+ */
+
 #ifndef SASS2SCSS_H
 #define SASS2SCSS_H
 

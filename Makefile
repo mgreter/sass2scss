@@ -1,3 +1,8 @@
+###
+# sass2scss
+# Licensed under the MIT License
+# Copyright (c) Marcel Greter
+###
 
 SASS2SCSS_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 
