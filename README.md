@@ -9,7 +9,7 @@ was to bring indented sass syntax support to [`libsass`](https://github.com/sass
 
 ## Unit Tests
 
-I added around 60 unit tests for `sass2sccs` to the `libsass` perl binding
+I added around 60 unit tests for `sass2scss` to the `libsass` perl binding
 [`CSS-Sass`](https://github.com/sass/perl-libsass/blob/master/t/06_sass_to_scss.t).
 
 ## Command Line Utility
@@ -39,7 +39,7 @@ The source Sass is read from stdin and the resulting SCSS is printed to stdout.
 The `lisp style` is the only output style that should not alter the line count
 of the input file. This is the best option if you still want to use `source-maps`,
 since it should only change the source by a few inserted chars. So far
-`sass2sccs` does not produce source-maps and `libsass` will not be able to
+`sass2scss` does not produce source-maps and `libsass` will not be able to
 produce 100% accurate `source-maps` for indented sass syntax input files!
 
 ## Use examples
