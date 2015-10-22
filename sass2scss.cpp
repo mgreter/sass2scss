@@ -613,15 +613,16 @@ namespace Sass
 				sass.substr(pos_left, 8) != "@content"
 			) {
 
-				// try to find a colon in the current line, but only ...
-				size_t pos_colon = sass.find_first_not_of(":", pos_left);
-				// assertion for valid result
+				// probably a selector anyway
+				converter.selector = true;
+				// try to find first colon in the current line
+				size_t pos_colon = sass.find_first_of(":", pos_left);
+				// assertion that we have a colon
 				if (pos_colon != std::string::npos)
 				{
-					// ... after the first word (skip begining colons)
-					pos_colon = sass.find_first_of(":", pos_colon);
-					// it is a selector if there was no colon found
-					converter.selector = pos_colon == std::string::npos;
+					// it is not a selector if we have a space after a colon
+					if (sass[pos_colon+1] == ' ') converter.selector = false;
+					if (sass[pos_colon+1] == '	') converter.selector = false;
 				}
 
 			}
