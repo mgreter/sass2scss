@@ -272,8 +272,40 @@ namespace Sass
 	}
 	// EO findCommentOpener
 
-	// remove multiline comments from sass string
-	// correctly skips quoted strings
+	// look for last meaningfull char
+	// used to look for multiline signal
+	size_t findLastChar(std::string &scss) {
+		size_t last = std::string::npos;
+		bool in_comment = false;
+		for (size_t i = 0, l = scss.length(); i < l; i++) {
+			if (i < l - 1) {
+				if (scss[i] == '\\' && (scss[i+1] != ' ' && scss[i+1] != '	')) {
+					last = std::string::npos; i ++;
+					continue;
+				}
+				if (scss[i] == '/' && scss[i+1] == '/') {
+					while (i < l && scss[i] != '\n') i++;
+				}
+				if (in_comment) {
+					if (scss[i] == '*' && scss[i+1] == '/') {
+						in_comment = false; i ++; i ++;
+					}
+				}
+				else if (scss[i] == '/' && scss[i+1] == '*') {
+					in_comment = true; i ++; i ++;
+				}
+			}
+			if (i >= l) break;
+			if (!in_comment && scss[i] != ' ' && scss[i] != '	') {
+				last = i;
+			}
+		}
+		return last;
+	}
+	// EO findLastChar
+
+	// look for last meaningfull char
+	// used to look for multiline signal
 	static std::string removeMultilineComment (std::string &sass)
 	{
 
@@ -506,6 +538,11 @@ namespace Sass
 						else if (!converter.semicolon) scss += ";";
 					}
 				}
+				else if (!converter.semicolon) {
+					if (converter.selector) {
+						scss += ";";
+					}
+				}
 
 				// reset comment state
 				converter.comment = "";
@@ -660,6 +697,13 @@ namespace Sass
 					}
 				}
 			}
+
+			if (converter.comma) {
+				converter.selector = true;
+				converter.property = false;
+				converter.semicolon = false;
+			}
+
 			// current line has more indentation
 			if (indent.length() > INDENT(converter).length())
 			{
@@ -734,10 +778,13 @@ namespace Sass
 			{
 
 				// get the last meaningfull char
+				size_t pos_last = findLastChar(scss);
+				char last = pos_last != std::string::npos ? scss[pos_last] : 'X';
 				std::string close = sass.substr(pos_right, 1);
+				if (last == '\\') scss[pos_last] = ' ';
 
 				// check if next line should be concatenated (list mode)
-				converter.comma = IS_PARSING(converter) && close == ",";
+				converter.comma = IS_PARSING(converter) && (last == ',' || last == '\\');
 				converter.semicolon = IS_PARSING(converter) && close == ";";
 
 				// check if we have more than
