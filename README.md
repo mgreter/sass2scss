@@ -42,6 +42,25 @@ since it should only change the source by a few inserted chars. So far
 `sass2scss` does not produce source-maps and `libsass` will not be able to
 produce 100% accurate `source-maps` for indented sass syntax input files!
 
+## Compile and Install
+
+If you want to use this lib from another C project, you can just add the source
+files to your project. To compile and install the utility we have added a very
+simple [Makefile][1]. On unix systems this normally involves the following steps:
+
+```bash
+git clone https://github.com/mgreter/sass2scss
+# alternatively you may fetch and extract an archive from github
+# wget https://github.com/mgreter/sass2scss/archive/master.tar.gz && tar master.tar.gz
+cd sass2scss # adjust name if you downloaded an archive 
+make # or i.e. `mingw32-make` or `dmake` on windows
+./sass2scss --help # binary is built in same directory
+sudo cp -a sass2scss /usr/bin # to install it system wide
+```
+
+[1]: https://www.gnu.org/software/make/manual/make.html
+
+
 ## Use examples
 
 The original Sass file, called `styles.sass`:
