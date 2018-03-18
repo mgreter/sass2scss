@@ -587,6 +587,7 @@ namespace Sass
 				sass.substr(pos_left, 5) == "@warn" ||
 				sass.substr(pos_left, 6) == "@debug" ||
 				sass.substr(pos_left, 6) == "@error" ||
+				sass.substr(pos_left, 6) == "@value" ||
 				sass.substr(pos_left, 8) == "@charset" ||
 				sass.substr(pos_left, 10) == "@namespace"
 			) { sass = indent + sass.substr(pos_left); }
