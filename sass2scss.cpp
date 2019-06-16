@@ -10,6 +10,7 @@
 #endif
 
 // include library
+#include <algorithm>
 #include <stack>
 #include <string>
 #include <cstring>
@@ -70,88 +71,93 @@ namespace Sass
 
 	// check if the given string is a pseudo selector
 	// needed to differentiate from sass property syntax
-	static bool isPseudoSelector (std::string& sel)
+	static bool isPseudoSelector (const std::string &sel)
 	{
+		if (sel.empty() || sel[0] != ':') return false;
+		const size_t pos = sel.find_first_not_of("abcdefghijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1);
+		std::string lowercase_prefix = sel;
+		if (pos != std::string::npos) lowercase_prefix.erase(pos, std::string::npos);
 
-		size_t len = sel.length();
-		if (len < 1) return false;
-		size_t pos = sel.find_first_not_of("abcdefghijklmnopqrstuvwxyz-ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1);
-		if (pos != std::string::npos) sel.erase(pos, std::string::npos);
-		size_t i = sel.length();
-		while (i -- > 0) { sel.at(i) = tolower(sel.at(i)); }
+		// Convert to lowercase:
+		for (size_t i = 0; i < lowercase_prefix.size(); ++i) {
+			char& ch = lowercase_prefix[i];
+			if (ch > 65 && ch < 92) ch += 32;
+		}
 
-		// CSS Level 1 - Recommendation
-		if (sel == ":link") return true;
-		if (sel == ":visited") return true;
-		if (sel == ":active") return true;
+		static const char *const kPseudoSelectors[] = {
+			// CSS Level 1 - Recommendation
+			":link",
+			":visited",
+			":active",
 
-		// CSS Level 2 (Revision 1) - Recommendation
-		if (sel == ":lang") return true;
-		if (sel == ":first-child") return true;
-		if (sel == ":hover") return true;
-		if (sel == ":focus") return true;
-		// disabled - also valid properties
-		// if (sel == ":left") return true;
-		// if (sel == ":right") return true;
-		if (sel == ":first") return true;
+			// CSS Level 2 (Revision 1) - Recommendation
+			":lang",
+			":first-child",
+			":hover",
+			":focus",
+			// disabled - also valid properties
+			// ":left",
+			// ":right",
+			":first",
 
-		// Selectors Level 3 - Recommendation
-		if (sel == ":target") return true;
-		if (sel == ":root") return true;
-		if (sel == ":nth-child") return true;
-		if (sel == ":nth-last-of-child") return true;
-		if (sel == ":nth-of-type") return true;
-		if (sel == ":nth-last-of-type") return true;
-		if (sel == ":last-child") return true;
-		if (sel == ":first-of-type") return true;
-		if (sel == ":last-of-type") return true;
-		if (sel == ":only-child") return true;
-		if (sel == ":only-of-type") return true;
-		if (sel == ":empty") return true;
-		if (sel == ":not") return true;
+			// Selectors Level 3 - Recommendation
+			":target",
+			":root",
+			":nth-child",
+			":nth-last-of-child",
+			":nth-of-type",
+			":nth-last-of-type",
+			":last-child",
+			":first-of-type",
+			":last-of-type",
+			":only-child",
+			":only-of-type",
+			":empty",
+			":not",
 
-		// CSS Basic User Interface Module Level 3 - Working Draft
-		if (sel == ":default") return true;
-		if (sel == ":valid") return true;
-		if (sel == ":invalid") return true;
-		if (sel == ":in-range") return true;
-		if (sel == ":out-of-range") return true;
-		if (sel == ":required") return true;
-		if (sel == ":optional") return true;
-		if (sel == ":read-only") return true;
-		if (sel == ":read-write") return true;
-		if (sel == ":dir") return true;
-		if (sel == ":enabled") return true;
-		if (sel == ":disabled") return true;
-		if (sel == ":checked") return true;
-		if (sel == ":indeterminate") return true;
-		if (sel == ":nth-last-child") return true;
+			// CSS Basic User Interface Module Level 3 - Working Draft
+			":default",
+			":valid",
+			":invalid",
+			":in-range",
+			":out-of-range",
+			":required",
+			":optional",
+			":read-only",
+			":read-write",
+			":dir",
+			":enabled",
+			":disabled",
+			":checked",
+			":indeterminate",
+			":nth-last-child",
 
-		// Selectors Level 4 - Working Draft
-		if (sel == ":any-link") return true;
-		if (sel == ":local-link") return true;
-		if (sel == ":scope") return true;
-		if (sel == ":active-drop-target") return true;
-		if (sel == ":valid-drop-target") return true;
-		if (sel == ":invalid-drop-target") return true;
-		if (sel == ":current") return true;
-		if (sel == ":past") return true;
-		if (sel == ":future") return true;
-		if (sel == ":placeholder-shown") return true;
-		if (sel == ":user-error") return true;
-		if (sel == ":blank") return true;
-		if (sel == ":nth-match") return true;
-		if (sel == ":nth-last-match") return true;
-		if (sel == ":nth-column") return true;
-		if (sel == ":nth-last-column") return true;
-		if (sel == ":matches") return true;
+			// Selectors Level 4 - Working Draft
+			":any-link",
+			":local-link",
+			":scope",
+			":active-drop-target",
+			":valid-drop-target",
+			":invalid-drop-target",
+			":current",
+			":past",
+			":future",
+			":placeholder-shown",
+			":user-error",
+			":blank",
+			":nth-match",
+			":nth-last-match",
+			":nth-column",
+			":nth-last-column",
+			":matches",
 
-		// Fullscreen API - Living Standard
-		if (sel == ":fullscreen") return true;
+			// Fullscreen API - Living Standard
+			":fullscreen",
+		};
 
-		// not a pseudo selector
-		return false;
-
+		static const char *const *const kPseudoSelectorsEnd =
+		  kPseudoSelectors + sizeof(kPseudoSelectors) / sizeof(kPseudoSelectors[0]);
+		return std::find(kPseudoSelectors, kPseudoSelectorsEnd, lowercase_prefix) != kPseudoSelectorsEnd;
 	}
 
 	static size_t findFirstCharacter (std::string& sass, size_t pos)
