@@ -20,7 +20,7 @@ $(CXX) ?= g++
 
 all: sass2scss
 
-CXXFLAGS = -DSASS2SCSS_VERSION="\"$(SASS2SCSS_VERSION)\""
+CXXFLAGS = -std=c++98 -DSASS2SCSS_VERSION="\"$(SASS2SCSS_VERSION)\""
 
 sass2scss.o: sass2scss.cpp
 	$(CXX) $(CXXFLAGS) -Wall -c sass2scss.cpp
