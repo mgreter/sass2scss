@@ -16,7 +16,7 @@ else
 	RM ?= rm -f
 endif
 
-$(CXX) ?= g++
+CXX ?= g++
 
 all: sass2scss
 
